@@ -15,5 +15,9 @@ main = mainWith myFunction
             _ -> putStrLn "error: exactly two arguments needed"
 
         -- replace "id" with the name of our function below
-        myFunction = id
+        myFunction = findMostCaloricElf
+
+findMostCaloricElf :: String -> String
+findMostCaloricElf textInput =
+  "0.5\n"
 
