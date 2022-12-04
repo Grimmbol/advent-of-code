@@ -9,4 +9,4 @@ compile: clean
 
 .PHONY: clean
 clean:
-	rm *.o solution *.hi
+	rm -f *.o solution *.hi
