@@ -20,18 +20,47 @@ main = mainWith myFunction
         myFunction = printPrioritySum
 
         
-data Rugsack = Rugsack Compartment Compartment
-type Compartment = String
+type Rugsack = String
 
 
 printPrioritySum :: String -> String
 printPrioritySum inputLines =
   show $
-  sum $
-  map getPriorityOfCommonItem
+  --sum $
+  findCommonItems "abc" "bdc"
   
-  map fillRugsack $
-  splitLines inputLines
+  --map getPriorityOfCommonItemInTriplet $
+  --groupInTrees $
+  --splitLines inputLines
+
+
+groupInTrees :: [Rugsack] -> [[Rugsack]]
+groupInTrees [] =
+  return []
+groupInTrees (first:(second:(third:rest))) =
+  [first, second, third] : (groupInTrees rest)
+
+
+getPriorityOfCommonItemInTriplet:: [Rugsack] -> Int
+getPriorityOfCommonItemInTriplet [] = 0
+getPriorityOfCommonItemInTriplet list =
+  mapCharToPriority (commonItems !! 0)
+  where
+    commonItems =
+      findCommonItems first $ findCommonItems second third
+    (first:(second:(third:rest))) =
+      list
+
+
+findCommonItems :: String -> String -> String
+findCommonItems [] _ = []
+findCommonItems _ [] = []
+findCommonItems (curFirst:restFirst) (curSecond:restSecond) =
+  if(curFirst == curSecond)
+  then
+    curFirst : (findCommonItems restFirst restSecond)
+  else
+    (findCommonItems restFirst restSecond)
 
 mapCharToPriority :: Char -> Int
 mapCharToPriority char =
@@ -40,17 +69,3 @@ mapCharToPriority char =
     (ord char) - ord 'A' + 27
   else
     (ord char) - ord 'a' + 1
-
-fillRugsack :: String -> Rugsack
-fillRugsack inputString =
-  Rugsack firstCompartment secondCompartment
-  where
-    (firstCompartment, secondCompartment) = 
-      splitAt midpoint inputString
-
-    midpoint = (length inputString) `div` 2
-
-
-showRugsack :: Rugsack -> String
-showRugsack (Rugsack first second) =
-  first ++ ", " ++ second
