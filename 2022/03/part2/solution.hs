@@ -1,6 +1,6 @@
 import System.Environment (getArgs)
 import StringUtils (splitLines)
-import Data.List (sort, elem)
+import Data.List (elem, nub)
 import Data.Char (ord, isUpper)
 
 -- From Real world haskell ch04
@@ -26,12 +26,16 @@ type Rugsack = String
 printPrioritySum :: String -> String
 printPrioritySum inputLines =
   show $
-  --sum $
-  findCommonItems "abc" "bdc"
-  
-  --map getPriorityOfCommonItemInTriplet $
-  --groupInTrees $
-  --splitLines inputLines
+  sum $
+  map getPriorityOfCommonItemInTriplet $
+  groupInTrees $
+  splitLines inputLines
+
+  where
+    triplet =
+      ["vJrwpWtwJgWrhcsFMMfFFhFp",
+       "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+       "PmmdzqPrVvPwwTWBwg"]
 
 
 groupInTrees :: [Rugsack] -> [[Rugsack]]
@@ -41,26 +45,39 @@ groupInTrees (first:(second:(third:rest))) =
   [first, second, third] : (groupInTrees rest)
 
 
-getPriorityOfCommonItemInTriplet:: [Rugsack] -> Int
+getPriorityOfCommonItemInTriplet :: [Rugsack] -> Int
 getPriorityOfCommonItemInTriplet [] = 0
-getPriorityOfCommonItemInTriplet list =
-  mapCharToPriority (commonItems !! 0)
+getPriorityOfCommonItemInTriplet (first:(second:(third:rest))) =
+  mapCharToPriority $ head commonItems
   where
     commonItems =
-      findCommonItems first $ findCommonItems second third
-    (first:(second:(third:rest))) =
-      list
+      nub $ -- Remove duplicate matches
+      findCommonItems first $
+      findCommonItems second third
+    
 
 
 findCommonItems :: String -> String -> String
 findCommonItems [] _ = []
 findCommonItems _ [] = []
-findCommonItems (curFirst:restFirst) (curSecond:restSecond) =
-  if(curFirst == curSecond)
+findCommonItems (curFirst:restFirst) second =
+  let foundChar = findMatchingChar curFirst second
+  in
+    case foundChar of
+      Just char -> char : (findCommonItems restFirst second)
+      Nothing -> findCommonItems restFirst second
+
+  where
+    restSecond = tail second
+  
+findMatchingChar :: Char -> String -> Maybe Char
+findMatchingChar _ [] = Nothing
+findMatchingChar char (c:cs) =
+  if(char == c)
   then
-    curFirst : (findCommonItems restFirst restSecond)
+    Just char
   else
-    (findCommonItems restFirst restSecond)
+    findMatchingChar char cs
 
 mapCharToPriority :: Char -> Int
 mapCharToPriority char =
