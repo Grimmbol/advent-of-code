@@ -53,5 +53,3 @@ createSublistsRecursive inputLines subList =
 sumCaloriesPerElf :: [[Int]] -> [Int]
 sumCaloriesPerElf caloryLists =
   map (\sublist -> sum sublist) caloryLists 
-
-
