@@ -17,28 +17,23 @@ pub fn main() {
 
 
 pub fn solve_01(input_lines: List(String)) -> Int {
-  let initial_state = IterationState(50, 0)
 
-  initial_state.zeroes
+  let positions = list.scan(over: input_lines, from: 50, with: get_new_position)
+  list.fold(over: positions, from: 0, with: fn(zeroes, position) {
+    case position_is_zero(position) {
+      True -> zeroes + 1
+      _ -> zeroes
+    }
+  })
 }
+
 
 
 pub type Command = String
 pub type Position = Int
 
-pub type IterationState {
-  IterationState(position: Position, zeroes: Int)
-}
-
-pub fn update_state(state: IterationState, command: Command) -> IterationState {  
-  let new_position = get_new_position(state.position, command)
-  
-  let zeroes = state.zeroes + case { new_position % 100 }  {
-    0 -> state.zeroes + 1
-    _ -> state.zeroes
-  }
-
-  IterationState(new_position, zeroes)
+pub fn position_is_zero(position: Position) -> Bool {
+   position % 100 == 0
 }
 
 pub fn get_new_position(position: Position, command: Command) -> Position {
