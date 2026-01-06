@@ -5,7 +5,7 @@ import simplifile
 
 
 pub fn main() {
-  let file_read = simplifile.read("./src/01/test_input.txt")
+  let file_read = simplifile.read("./src/01/full_input.txt")
   let input_lines = case file_read {
     Ok(contents) -> contents |> string.split("\n")
     _ -> []
@@ -19,6 +19,9 @@ pub fn main() {
 pub fn solve_01(input_lines: List(String)) -> Int {
 
   let positions = list.scan(over: input_lines, from: 50, with: get_new_position)
+
+  echo positions
+  
   list.fold(over: positions, from: 0, with: fn(zeroes, position) {
     case position_is_zero(position) {
       True -> zeroes + 1
@@ -40,7 +43,10 @@ pub fn get_new_position(position: Position, command: Command) -> Position {
   case parse_command(command) {
     #("L", length) -> {position - length}
     #("R", length) -> {position + length}
-    #(_, _) -> {position}
+    #(_, _) -> {
+      echo "????"
+      position
+    }
   }
 }
 
